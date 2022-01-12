@@ -2,13 +2,14 @@ const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: "./src/main.ts",
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(process.cwd(), "dist"),
     clean: true,
   },
   resolve: {
@@ -79,6 +80,14 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: '管理输出',
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(process.cwd(), "static"),
+          to: path.resolve(process.cwd(), "dist"),
+        },
+      ],
     }),
   ],
 };
