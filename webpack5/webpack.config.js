@@ -1,3 +1,3 @@
-const baseConfig = require("./config/webpack-common-broswer");
+const baseConfig = require("./build-script/webpack-common-broswer");
 
 module.exports = baseConfig;
