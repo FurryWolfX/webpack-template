@@ -1,3 +1,5 @@
-const baseConfig = require("./build-script/webpack-common-broswer");
+const {merge} = require("webpack-merge");
+const webpackCommon = require("./build-script/webpack-common");
+const webpackBrowser = require("./build-script/webpack-browser");
 
-module.exports = baseConfig;
+module.exports = merge(webpackCommon, webpackBrowser);
