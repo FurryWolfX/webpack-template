@@ -1,5 +1,7 @@
-export default class Main {
-  name: string = 'hello';
-}
+import Vue from "vue";
+import Home from "./Home.vue";
 
-console.log(new Main().name);
+
+new Vue({
+  render: h => h(Home),
+}).$mount(document.body);

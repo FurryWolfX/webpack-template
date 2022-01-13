@@ -11,11 +11,29 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     chunkFilename: "[name].chunk.js",
-    path: path.resolve(process.cwd(), "dist"),
+    path: path.resolve(__dirname, "../dist"),
     clean: true,
   },
   resolve: {
-    extensions: [".wasm", ".mjs", ".js", ".json", ".ts"],
+    extensions: [".mjs", ".js", ".ts"],
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
   },
   plugins: [
     new SimpleProgressWebpackPlugin({

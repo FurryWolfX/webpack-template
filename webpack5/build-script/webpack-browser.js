@@ -7,9 +7,9 @@ const CopyPlugin = require("copy-webpack-plugin");
  * 浏览器 JS/TS/SASS/CSS/资源 相关
  */
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
   devServer: {
-    static: './dist',
+    static: path.resolve(__dirname, '../dist'),
   },
   module: {
     rules: [
@@ -36,6 +36,10 @@ module.exports = {
                   }
                 ]
               ],
+              plugins: [
+                ["@babel/plugin-proposal-decorators", {legacy: true}],
+                ["@babel/plugin-proposal-class-properties", {loose: true}],
+              ]
             },
           }
         ],
@@ -44,9 +48,21 @@ module.exports = {
       {
         test: /\.s?css$/,
         use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-          {loader: 'sass-loader'},
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    "postcss-preset-env",
+                  ],
+                ],
+              },
+            }
+          },
+          'sass-loader',
         ]
       },
       {
@@ -68,9 +84,15 @@ module.exports = {
     ],
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        // 支持 vue 文件的类型检查
+        extensions: {vue: true}
+      }
+    }),
     new HtmlWebpackPlugin({
       title: '管理输出',
+      inject: 'body'
     }),
     new CopyPlugin({
       patterns: [
