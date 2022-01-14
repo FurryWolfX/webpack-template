@@ -2,17 +2,43 @@ const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const WebpackBar = require('webpackbar');
+const {VueLoaderPlugin} = require("vue-loader");
+
+function resolve(str) {
+  return path.resolve(__dirname, str)
+}
 
 /**
- * 浏览器 JS/TS/SASS/CSS/资源 相关
+ * 基础配置
  */
 module.exports = {
+  stats: 'errors-warnings',
+  mode: process.env.NODE_ENV,
+  entry: resolve("src/main.ts"),
+  output: {
+    filename: '[name].bundle.js',
+    chunkFilename: "[name].chunk.js",
+    path: resolve("dist"),
+    clean: true,
+  },
+  resolve: {
+    extensions: [".mjs", ".js", ".ts"],
+  },
   devtool: process.env.NODE_ENV === 'development' ? 'source-map' : undefined,
   devServer: {
-    static: path.resolve(__dirname, '../dist'),
+    static: resolve('static'),
   },
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        use: [
+          {
+            loader: 'vue-loader',
+          },
+        ],
+      },
       {
         test: /\.(tsx?|m?jsx?)$/,
         use: [
@@ -83,7 +109,27 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
   plugins: [
+    new WebpackBar(),
+    new VueLoaderPlugin(),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         // 支持 vue 文件的类型检查
@@ -97,8 +143,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "../static"),
-          to: path.resolve(__dirname, "../dist"),
+          from: resolve("static"),
+          to: resolve("dist"),
         },
       ],
     }),
