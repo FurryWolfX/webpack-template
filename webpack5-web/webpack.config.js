@@ -2,6 +2,7 @@ const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const WebpackBar = require('webpackbar');
 
 function resolve(str) {
   return path.resolve(__dirname, str)
@@ -118,6 +119,7 @@ module.exports = {
     },
   },
   plugins: [
+    new WebpackBar(),
     new ForkTsCheckerWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: '管理输出',
